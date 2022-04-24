@@ -58,3 +58,106 @@ self.Board.prototype = {
         } 
     }
 })();
+
+(function(){
+    self.Bar = function(x,y,width,height,board){
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.board = board;
+        this.board.bars.push(this);
+        this.kind = "rectangle";
+        this.speed = 5;
+    }
+
+    self.Bar.prototype = {
+        down: function(){
+          this.y += this.speed;
+        },
+        up: function(){
+          this.y -= this.speed;       
+        },
+        toString: function(){
+            return "x: " + this.x + " y: " + this.y;
+        }
+    }
+})();
+
+(function(){
+    //clase BoardView
+    self.BoardView = function(canvas, board){
+      this.canvas = canvas;
+      this.canvas.width = board.width;
+      this.canvas.height = board.height;
+      this.board = board;
+      this.ctx = canvas.getContext("2d");
+    }
+
+    self.BoardView.prototype = {
+      clean: function(){
+        this.ctx.clearRect(0,0,board.width, board.height)
+      },
+      draw: function(){
+          for (let i = this.board.elements.length -1; i>=0; i--){
+             let el = this.board.elements[i];
+             draw(this.ctx, el)
+          }
+      },
+      check_collisions: function(){
+        for (let i = this.board.bars.length -1; i>=0; i--){
+            let bar = this.board.bars[i];
+            if(hit(bar, this.board.ball)){
+                console.log("Uy choco")
+               this.board.ball.collision(bar)
+            }
+        }
+
+      },
+      play : function(){
+          if(this.board.playing){
+          this.clean()
+          this.draw()
+          this.check_collisions()
+          this.board.ball.move()    
+          }       
+      }    
+    }
+    function hit(a,b){
+     let hit = false;
+     if(b.x + b.width >= a.x && b.x < a.x + a.width)
+     {
+         if(b.y + b.height >= a.y && b.y < a.y + a.height)
+         hit = true
+     }
+     if(b.x <= a.x && b.x + b.width >= a.x + a.width)
+     {
+         if(b.y <= a.y && b.y + b.height >= a.y + a.height)
+         hit = true
+     }
+     if(a.x <= b.x && a.x + a.width >= b.x + b.width)
+     {
+        if(a.y <= b.y && a.y + a.height >= b.y + b.height)
+        hit = true;
+        }
+    return hit;
+}
+
+    function draw(ctx, element){
+        switch(element.kind){
+            case "rectangle":
+                ctx.fillRect(element.x, element.y, element.width, element.height)
+                break;
+
+            case "circle": 
+                ctx.beginPath();
+                ctx.arc(element.x, element.y, element.radius, 0, 7);
+                ctx.fill();
+                ctx.closePath();
+                break;
+    
+        }     
+
+    }
+	
+})();
