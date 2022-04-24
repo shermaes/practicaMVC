@@ -161,3 +161,50 @@ self.Board.prototype = {
     }
 	
 })();
+
+let board = new Board(800,400)
+let bar = new Bar(20,100,40,100, board)
+let bar2 = new Bar(700,100,40,100, board)
+let canvas = document.getElementById('canvas')
+let board_view = new BoardView(canvas, board)
+let ball = new Ball(350,100, 10, board);
+
+
+//EventListeners
+    document.addEventListener("keydown", function(ev){
+        
+      if(ev.code=="ArrowUp"){
+        ev.preventDefault;
+          bar2.up();
+      }
+      else if(ev.code=="ArrowDown"){
+        ev.preventDefault;
+          bar2.down();}
+      else if(ev.code == "KeyW"){
+        ev.preventDefault;
+          bar.up();}  
+      else if(ev.code == "KeyS"){
+        ev.preventDefault;
+          bar.down();}
+      else if(ev.code == "Space"){
+        ev.preventDefault;
+        board.playing = !board.playing;
+
+      }       
+
+    console.log(bar.toString());
+    console.log(bar2.toString());     
+    });
+
+    window.addEventListener("load",controller,true);
+
+    window.requestAnimationFrame(controller);
+    setTimeout(function(){
+        ball.direction = -1;
+    },4000)
+ //Funcion controller
+
+function controller(){
+    board_view.play();
+    window.requestAnimationFrame(controller);
+}
